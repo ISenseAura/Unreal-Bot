@@ -83,13 +83,13 @@ export class Client extends EventEmitter {
         }
         return out;
       }
-    connect(server = 'sim.smogon.com', port = 8000) {
+    connect(server = 'sim3.psim.us', port = 8000) {
         if (!server.includes('.')) server = `${server}.psim.us`;
         if (this.connection?.connected) this.connection.close();
         const client = new ws.client();
         client.on('connect', this.onConnect.bind(this));
         client.on('connectFailed', this.onFailure.bind(this));
-        client.connect(`ws://${server}:${port}/showdown/websocket`, []);
+        client.connect(`wss://${server}/showdown/websocket`, []);
     }
     private onFailure(err: Error) {
         this.emit('error', err);
@@ -157,8 +157,10 @@ export class Client extends EventEmitter {
         }
     }
     private async onMessage(message: ws.Message) {
+        //console.log(message.utf8Data);
         if (message.type !== 'utf8' || !message.utf8Data) return;
         this.emit('raw', message.utf8Data);
+        try {
         const messages = Client.parse(message.utf8Data);
         for (const m of messages) {
             if (m.type === 'challstr') {
@@ -171,6 +173,9 @@ export class Client extends EventEmitter {
             this.emit(m.type, [...m.args], m.roomid, {...m});
             
         }
+    } catch (e) {
+        console.log(e);
+    }
     }
     private onConnect(connection: ws.connection) {
         this.connection = connection;
