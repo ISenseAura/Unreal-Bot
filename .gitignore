@@ -4,4 +4,4 @@
 */tsconfig.tsbuildinfo
 /databases/*.db
 /tsconfig.tsbuildinfo
-config/*.ts
+src/config/*.ts
