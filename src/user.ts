@@ -61,6 +61,9 @@ export class User extends PSSendable {
         page.update();
         return page;
     }
+    isDev() {
+        return global.Config.developers.includes(toID(this.name));
+    }
 }
 
 export class UserList extends PSList<User> {

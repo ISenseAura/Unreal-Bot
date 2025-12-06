@@ -5,3 +5,4 @@
 /databases/*.db
 /tsconfig.tsbuildinfo
 src/config/*.ts
+!src/config/*.example.ts
