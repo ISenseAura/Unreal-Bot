@@ -1,32 +1,35 @@
-import {Client} from './';
+import { Client } from "./";
+import { CommandsList } from "./commands";
+import Config from "./config/bot";
+import { toId } from "./utils";
+
+global.Commands = new CommandsList();
+global.Config = Config;
+global.toId = toId
 
 const bot = new Client({
-    name: 'my3amthoughts',prefix: 'sudo ',  pass: '',rooms: ['botdevelopment'], avatar: 'youngcouple'
+  name: Config.username,
+  prefix: Config.prefixes,
+  pass: Config.password,
+  rooms: Config.rooms,
+  avatar: "youngcouple",
 });
-bot.on('error', (args) => {
-    console.log(args);
-})
-bot.on('raw', msg => {
-//console.log(msg);
-});
-bot.on('message', msg => {
-   console.log(msg.line);
-const text = msg.text;
-if (text.startsWith(bot.settings.prefix)) {
-//console.log(text);
-const cmd = text.split(' ')[1];
-const value = text.split(' ').slice(2).join(" ");
-if (cmd === 'eval') {
-if (msg.from.id !== 'p9') return msg.privateRespond('eval access denied.');
-try {
-const result = eval(value);
-msg.respond(`${result}`);
-}
-catch (e: any) {
-msg.privateRespond(`!code ${e.message}`);
-}
-}
-}
-});
-bot.connect('sim3.psim.us', 8000);
 
+global.Users = bot.users;
+global.Rooms = bot.rooms;
+
+bot.on("error", (args) => {
+  console.log("PSError: ", args);
+});
+bot.on("popup", (msg) => {
+  console.log("PSPopup: " + msg);
+})
+bot.on("raw", (msg) => {
+  console.log(msg.slice(0, 100));
+});
+bot.on("message", (msg) => {
+    if (msg.isCommand()) {
+      Commands.parseCommand(msg);
+  }
+});
+bot.connect("sim3.psim.us", 8000);
