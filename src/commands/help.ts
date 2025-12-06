@@ -11,7 +11,7 @@ export const commands: Record<string, Command> = {
         string,
         CommandModule
       >;
-      let html = `  <div class="infobox" style="max-height:300px;overflow-y:scroll;border:0.6px solid white;padding: 2px;">
+      let html = `  <div class="infobox" style="max-height:300px;overflow-y:scroll;border:0.4px solid white;padding: 12px;">
       <strong> All Commands: </strong> <br/>
     `;
       for (const [key, data] of Object.entries(sortedCommands)) {
