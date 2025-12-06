@@ -1,14 +1,16 @@
 /**
- * Message handling.
+ * PSMessage handling.
  */
+import { Command } from './commands';
 import { toID } from './lib';
 import {Client, PLine} from './ps';
 import {Room} from './room';
 import {User} from './user';
 
-const RANK_ORDER = ['', '+', '%', '@', '*', '#', '&'];
 
-export class Message {
+const RANK_ORDER = ['', '+', '%', '@', '*', '#', '&', '~'];
+
+export class PSMessage {
     text!: string;
     group = ' ';
     /** User if it's a pm, Room if it's in a room, null if it's a system message 
@@ -19,13 +21,14 @@ export class Message {
     from: User | null = null;
     isPSCommand = false;
     line!: PLine;
+    prefix?: string;
     constructor(public client: Client) {}
     static async getUser(name: string, client: Client) {
         if (name === '&') return null;
         return (await client.users.get(name)) || false;
     }
     static async from(line: PLine, client: Client) {
-        const message = new Message(client);
+        const message = new PSMessage(client);
         message.line = line;
         switch (line.type) {
         case 'pm': {
@@ -86,9 +89,22 @@ export class Message {
         return this.room === undefined;
     }
     isCommand() {
-        const prefix = this.client.settings.prefix;
-        return !!(prefix && this.text.startsWith(prefix));
+        const prefixes = this.client.settings.prefix;
+        let isCommand = false;
+        if (Array.isArray(prefixes)) {
+            for (const prefix of prefixes) {
+                if (this.text.startsWith(prefix)) {
+                    isCommand = true;
+                    this.prefix = prefix;
+                    break;
+                }
+            }
+        } else if (prefixes) {
+            isCommand = this.text.startsWith(prefixes);
+        }
+        return isCommand;
     }
+
     isRank(rank: string) {
         if (!this.from) return false;
         let auth = this.from.group;
@@ -108,7 +124,7 @@ export class Message {
         return RANK_ORDER.indexOf(auth) >= RANK_ORDER.indexOf(rank);
     }
     clone() {
-        const message = new Message(this.client);
+        const message = new PSMessage(this.client);
         Object.assign(message, this);
         return message;
     }

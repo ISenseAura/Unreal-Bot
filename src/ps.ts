@@ -4,14 +4,14 @@ import {splitFirst, toID, defer} from './lib';
 import EventEmitter from 'events';
 import {UserList} from './user';
 import {RoomList} from './room';
-import {Message} from './message';
+import {PSMessage} from './message';
 import {PageBuilder, PageRequest} from './page';
 
 export interface Settings {
     name: string;
     pass: string;
     rooms?: string[];
-    prefix?: string;
+    prefix?: string[];
     status?: string;
     avatar?: string;
     /* Number of MS to wait before attempting to reconnect. Defaults to one minute. */
@@ -166,7 +166,7 @@ export class Client extends EventEmitter {
             if (m.type === 'challstr') {
                 void this.handleChallstr(m.args);
             }
-            const messageObj = await Message.from(m, this);
+            const messageObj = await PSMessage.from(m, this);
             if (messageObj) {
                 return this.emit('message', messageObj.clone());
             }
