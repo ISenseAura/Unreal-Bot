@@ -13,30 +13,49 @@ global.toId = toId;
 const storage = new StorageManager(path.resolve(__dirname, "../database"));
 global.Db = storage;
 
-const bot = new Client({
+const PS = new Client({
   name: Config.username,
   prefix: Config.prefixes,
   pass: Config.password,
   rooms: Config.rooms,
   avatar: "youngcouple",
+  status: Config.status,
 });
 
-global.Users = bot.users;
-global.Rooms = bot.rooms;
+global.Users = PS.users;
+global.Rooms = PS.rooms;
+global.PS = PS;
 
-bot.on("error", (args) => {
+PS.on("error", (args) => {
   console.log("PSError: ", args);
 });
-bot.on("popup", (msg) => {
+PS.on("popup", (msg) => {
   console.log("PSPopup: " + msg);
-})
-bot.on("raw", (msg) => {
+});
+PS.on("raw", (msg) => {
   console.log(msg.slice(0, 100));
 });
-bot.on("message", (msg) => {
-  if (msg.noReply) return console.log("Attempted to reply to a room init message");
-    if (msg.isCommand()) {
-      Commands.parseCommand(msg);
+PS.on("message", (msg) => {
+  if (msg.noReply)
+    return console.log("Attempted to reply to a room init message");
+  if (/\bp9\b[.,!?]?/i.test(msg.text)) {
+    Discord.sendDM(
+      Config.discordOwnerId,
+      `<${msg.to.id}>${msg.from.name}: ${msg.text}`
+    );
+  }
+
+  if (msg.isCommand()) {
+    Commands.parseCommand(msg);
   }
 });
-bot.connect("sim3.psim.us", 8000);
+PS.connect("sim3.psim.us", 8000);
+
+// discord bot
+const Discord = new DiscordBot({
+  token: Config.discordToken,
+  ownerId: Config.discordOwnerId,
+  prefix: "!",
+});
+
+global.Discord = Discord;
