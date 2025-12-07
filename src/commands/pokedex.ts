@@ -18,7 +18,6 @@ export const commands: Record<string, Command | string> = {
         const entries = response.data.flavor_text_entries.filter(
           (entry: any) => entry.language.name === "en"
         );
-        console.log(entries);
         message.respond(
           `**${response.data.name}:** ${entries[0].flavor_text
             .split("\n")

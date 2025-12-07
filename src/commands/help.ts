@@ -15,7 +15,6 @@ export const commands: Record<string, Command> = {
       <strong> All Commands: </strong> <br/>
     `;
       for (const [key, data] of Object.entries(sortedCommands)) {
-        console.log(commands);
         html += `
 <details style="margin:4px 0; font-family:sans-serif; font-size:12px;">
   <summary style="font-weight:600; cursor:pointer; color:#3b6fa6;">
@@ -46,6 +45,15 @@ export const commands: Record<string, Command> = {
       html += `</div>`;
       message.respond("/adduhtml mycommands, " + html);
       return;
+    },
+  },
+  help: {
+    name: "help",
+    help: "Provides description and syntax of a command",
+    syntax: "!help command",
+    async execute(args, message) {
+      if (!args[0]) return message.respond(`Usage: \`\`${this.syntax}\`\``);
+      
     },
   },
 };
