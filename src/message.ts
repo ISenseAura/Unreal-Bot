@@ -19,6 +19,7 @@ export class PSMessage {
     to!: User | Room | null;
     room?: Room | null;
     from: User | null = null;
+    noReply!: boolean;
     isPSCommand = false;
     line!: PLine;
     prefix?: string;
@@ -27,9 +28,10 @@ export class PSMessage {
         if (name === '&') return null;
         return (await client.users.get(name)) || false;
     }
-    static async from(line: PLine, client: Client) {
+    static async from(line: PLine, client: Client, noReply = false) {
         const message = new PSMessage(client);
         message.line = line;
+        message.noReply = noReply;
         switch (line.type) {
         case 'pm': {
             const [senderName, receiverName, ...rest] = line.args;

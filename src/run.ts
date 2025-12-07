@@ -28,6 +28,7 @@ bot.on("raw", (msg) => {
   console.log(msg.slice(0, 100));
 });
 bot.on("message", (msg) => {
+  if (msg.noReply) return console.log("Attempted to reply to a room init message");
     if (msg.isCommand()) {
       Commands.parseCommand(msg);
   }

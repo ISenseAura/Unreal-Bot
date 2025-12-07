@@ -162,11 +162,13 @@ export class Client extends EventEmitter {
         this.emit('raw', message.utf8Data);
         try {
         const messages = Client.parse(message.utf8Data);
+        let isRoomInit = false;
         for (const m of messages) {
             if (m.type === 'challstr') {
                 void this.handleChallstr(m.args);
             }
-            const messageObj = await PSMessage.from(m, this);
+            if (m.type === 'init') isRoomInit = true;
+            const messageObj = await PSMessage.from(m, this, isRoomInit);
             if (messageObj) {
                 return this.emit('message', messageObj.clone());
             }
