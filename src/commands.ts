@@ -17,8 +17,8 @@ export interface CommandModule {
   name: string;
   description: string;
   commands?: Record<string, Partial<Command>>;
-  sourcePath?: string;
   perms?: Perms;
+  sourcePath?: string;
 }
 
 export interface CommandHistoryEntry {
@@ -32,7 +32,7 @@ export interface Command {
   syntax: string;
   prefix?: string;
   aliases?: string[];
-  perms?: "dev" | "+" | "%" | "@" | "*" | "#" | "&" | "~";
+  perms?: Perms;
   overridePerms?: boolean;
   isLocked?: boolean;
 
