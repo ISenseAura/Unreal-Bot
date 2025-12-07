@@ -2,10 +2,16 @@ import { Client } from "./";
 import { CommandsList } from "./commands";
 import Config from "./config/bot";
 import { toId } from "./utils";
+import { DiscordBot } from "./discord";
+import { StorageManager } from "./lib/storage";
+import path from "path";
 
 global.Commands = new CommandsList();
 global.Config = Config;
-global.toId = toId
+global.toId = toId;
+
+const storage = new StorageManager(path.resolve(__dirname, "../database"));
+global.Db = storage;
 
 const bot = new Client({
   name: Config.username,
