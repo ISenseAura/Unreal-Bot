@@ -7,3 +7,4 @@
 src/config/*.ts
 !src/config/*.example.ts
 database/*
+!database/*.md
