@@ -3,7 +3,7 @@
     "@types/websocket": "^1.0.5",
     "axios": "^1.13.2",
     "cheerio": "^1.0.0-rc.10",
-    "typescript": "^4.2.4",
+    "discord.js": "^14.25.1",
     "websocket": "^1.0.34"
   },
   "name": "psim.us",
@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
-    "esbuild": "^0.27.1"
+    "esbuild": "^0.27.1",
+    "typescript": "^5.9.3"
   }
 }
