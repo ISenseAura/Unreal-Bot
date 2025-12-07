@@ -1,6 +1,11 @@
 import { Command, CommandModule } from "../commands";
 import { PSMessage } from "../message";
 
+export const info: CommandModule = {
+  name: "Help",
+  description: "A bunch of help commands.",
+};
+
 export const commands: Record<string, Command> = {
   commands: {
     name: "commands",
@@ -54,8 +59,17 @@ export const commands: Record<string, Command> = {
     async execute(args, message) {
       if (!args[0]) return message.respond(`Usage: \`\`${this.syntax}\`\``);
       const cmd = Commands.get(toId(args[0]));
-      if (!cmd) return message.respond(`Command not found. Type \`\`${this.prefix}commands\`\` to see a list of available commands`);
-      const help = `${cmd.help} Usage: \`\`${cmd.syntax}\`\`. (${cmd.perms === 'dev' ? 'Developer only' : (cmd.perms ? cmd.perms + ' and above' : '')})`;
+      if (!cmd)
+        return message.respond(
+          `Command not found. Type \`\`${this.prefix}commands\`\` to see a list of available commands`
+        );
+      const help = `${cmd.help}; Usage: \`\`${cmd.syntax}\`\`. (${
+        cmd.perms === "dev"
+          ? "Developer only"
+          : cmd.perms
+          ? cmd.perms + " and above"
+          : ""
+      })`;
       message.respond(help);
     },
   },

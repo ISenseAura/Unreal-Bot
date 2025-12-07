@@ -2,7 +2,7 @@ import type { Command, CommandModule } from "../commands";
 import { PSMessage } from "../message";
 
 export const info: CommandModule = {
-  name: "Fun Commands",
+  name: "Fun",
   description: "Fun commands which can be used to bully people, the bot or yourself.",
 };
 export const commands: Record<string, Command> = {

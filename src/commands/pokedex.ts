@@ -1,6 +1,12 @@
-import { Command } from "../commands";
+import { Command, CommandModule } from "../commands";
 import { PSMessage } from "../message";
 import axios from "axios";
+
+export const info: CommandModule = {
+  name: "Pokedex",
+  description: "Commands to fetch information about a pokemon",
+  perms: "dev",
+};
 
 export const commands: Record<string, Command | string> = {
   dexentry: {

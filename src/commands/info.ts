@@ -3,7 +3,7 @@ import { PSMessage } from "../message";
 import { TIMEZONE_MAP } from "../data/timezones";
 
 export const info: CommandModule = {
-  name: "Informational Commands",
+  name: "Information",
   description: "You are not gonna read this",
 };
 
