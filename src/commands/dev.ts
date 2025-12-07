@@ -4,6 +4,7 @@ import type { PSMessage } from "../message";
 export const info: CommandModule = {
   name: "Developer Commands",
   description: "Developer commands which are useful during bot development.",
+  perms: "dev",
 };
 export const commands: Record<string, Command> = {
   eval: {
@@ -11,7 +12,6 @@ export const commands: Record<string, Command> = {
     help: "Evaluates an expression in javascript.",
     syntax: "!eval expression",
     aliases: ["js"],
-    perms: "dev",
     async execute(args: string[], message: PSMessage) {
       if (!args[0]) return message.respond("Usage: " + this.syntax);
       let result = "";
@@ -28,7 +28,6 @@ export const commands: Record<string, Command> = {
     name: "serverinfo",
     help: "Shows technical info about the bot's environment.",
     syntax: "!serverinfo",
-    perms: "dev",
     async execute(args, message) {
       const mem = process.memoryUsage();
       message.respond(
@@ -41,64 +40,61 @@ export const commands: Record<string, Command> = {
     },
   },
   threads: {
-  name: "threads",
-  help: "Shows active event loop handles.",
-  syntax: "!threads",
-  async execute(args, message) {
-    // @ts-ignore
-    const handles = process._getActiveHandles();
-    message.respond(`**Active Handles:** ${handles.length}`);
+    name: "threads",
+    help: "Shows active event loop handles.",
+    syntax: "!threads",
+    async execute(args, message) {
+      // @ts-ignore
+      const handles = process._getActiveHandles();
+      message.respond(`**Active Handles:** ${handles.length}`);
+    },
   },
-},
-pinghost: {
-  name: "pinghost",
-  help: "Attempts a TCP ping to a host.",
-  syntax: "!pinghost hostname",
-  perms: "dev",
-  async execute(args, message) {
-    if (!args[0]) return message.respond(`Usage: ${this.syntax}`);
+  pinghost: {
+    name: "pinghost",
+    help: "Attempts a TCP ping to a host.",
+    syntax: "!pinghost hostname",
+    async execute(args, message) {
+      if (!args[0]) return message.respond(`Usage: ${this.syntax}`);
 
-    const host = args[0];
-    const start = Date.now();
-    const net = await import("net");
+      const host = args[0];
+      const start = Date.now();
+      const net = await import("net");
 
-    const socket = net.createConnection(80, host);
-    socket.setTimeout(3000);
+      const socket = net.createConnection(80, host);
+      socket.setTimeout(3000);
 
-    socket.on("connect", () => {
-      const ms = Date.now() - start;
-      socket.destroy();
-      message.respond(`**Ping** to ${host}: ${ms}ms`);
-    });
+      socket.on("connect", () => {
+        const ms = Date.now() - start;
+        socket.destroy();
+        message.respond(`**Ping** to ${host}: ${ms}ms`);
+      });
 
-    socket.on("timeout", () => {
-      socket.destroy();
-      message.respond(`Oof Timeout pinging ${host}`);
-    });
+      socket.on("timeout", () => {
+        socket.destroy();
+        message.respond(`Oof Timeout pinging ${host}`);
+      });
 
-    socket.on("error", () => {
-      message.respond(`Err Unable to reach ${host}`);
-    });
+      socket.on("error", () => {
+        message.respond(`Err Unable to reach ${host}`);
+      });
+    },
   },
-},
 
-dns: {
-  name: "dns",
-  help: "DNS lookup for a domain.",
-  syntax: "!dns domain",
-  perms: "dev",
-  async execute(args, message) {
-    if (!args[0]) return message.respond("Usage: " + this.syntax);
+  dns: {
+    name: "dns",
+    help: "DNS lookup for a domain.",
+    syntax: "!dns domain",
+    async execute(args, message) {
+      if (!args[0]) return message.respond("Usage: " + this.syntax);
 
-    const dns = await import("node:dns").then(m => m.promises);
+      const dns = await import("node:dns").then((m) => m.promises);
 
-    try {
-      const res = await dns.lookup(args[0]);
-      message.respond(`**DNS:** ${args[0]} => ${res.address}`);
-    } catch {
-      message.respond(`DNS lookup failed for ${args[0]}`);
-    }
+      try {
+        const res = await dns.lookup(args[0]);
+        message.respond(`**DNS:** ${args[0]} => ${res.address}`);
+      } catch {
+        message.respond(`DNS lookup failed for ${args[0]}`);
+      }
+    },
   },
-},
-
 };

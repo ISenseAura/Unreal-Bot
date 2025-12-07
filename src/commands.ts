@@ -4,6 +4,7 @@ import { toID } from "./lib";
 import type { Room } from "./room";
 import type { User } from ".";
 import type { PSMessage } from "./message";
+import type { Perms } from "./permissions";
 
 export interface CommandContext {
   room: Room | null;
@@ -12,9 +13,10 @@ export interface CommandContext {
 }
 
 export interface CommandModule {
-    name: string;
-    description: string;
-    commands?: Record<string, Partial<Command>>;
+  name: string;
+  description: string;
+  commands?: Record<string, Partial<Command>>;
+  perms?: Perms;
 }
 
 export interface CommandHistoryEntry {
@@ -26,8 +28,10 @@ export interface Command {
   name: string;
   help: string;
   syntax: string;
+  prefix?: string;
   aliases?: string[];
   perms?: "dev" | "+" | "%" | "@" | "*" | "#" | "&" | "~";
+  overridePerms?: boolean;
   isLocked?: boolean;
 
   cooldown?: number;
@@ -45,7 +49,7 @@ export interface Command {
 export class CommandsList {
   private commands = new Map<string, Command>();
   private commandDirs = [path.join(__dirname, "commands")];
-  private sortedCommands: Record<string, CommandModule>  = {};
+  private sortedCommands: Record<string, CommandModule> = {};
 
   constructor() {
     this.loadAll();
@@ -74,20 +78,27 @@ export class CommandsList {
         const moduleName = toId(mod.info?.name);
         if (!mod.commands) continue;
         if (moduleName) {
-            this.sortedCommands[moduleName] = mod.info;
+          this.sortedCommands[moduleName] = mod.info;
         }
         for (const key of Object.keys(mod.commands)) {
-          const command = mod.commands[key];
+          const command = mod.commands[key] as Command;
           command.syntax = `\`\`${command.syntax.replace(
             "!",
             global.Config.prefixes[0]
           )}\`\``;
+          command.prefix = global.Config.prefixes[0];
+          if (mod?.info?.perms && !command.overridePerms)
+            command.perms = mod.info.perms;
           this.commands.set(toID(command.name), command);
           if (moduleName) {
             if (this.sortedCommands[moduleName].commands === undefined) {
-                this.sortedCommands[moduleName].commands = {};
-            } if (!this.sortedCommands[moduleName].commands![command.name]) {
-                this.sortedCommands[moduleName].commands![command.name] = { help: command.help, syntax: command.syntax } as any;
+              this.sortedCommands[moduleName].commands = {};
+            }
+            if (!this.sortedCommands[moduleName].commands![command.name]) {
+              this.sortedCommands[moduleName].commands![command.name] = {
+                help: command.help,
+                syntax: command.syntax,
+              } as any;
             }
           }
           if (command.aliases) {
@@ -116,9 +127,11 @@ export class CommandsList {
       }
     }
     try {
-    command?.execute(text.split(" ").slice(1), message);
+      command?.execute(text.split(" ").slice(1), message);
     } catch (e) {
-      message.respond(`An error occurred while executing the command: ${(e as Error).message}`);
+      message.respond(
+        `An error occurred while executing the command: ${(e as Error).message}`
+      );
     }
 
     return command || null;
