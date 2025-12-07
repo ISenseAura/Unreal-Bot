@@ -29,6 +29,7 @@ export class Room extends PSSendable {
         return true;
     }
     send(message: string) {
+        if (Config.lockedRooms.includes(this.id)) return console.log(`Cannot send message to a locked room: ${this.id}`);
         this.client.send(`${this.id}|${message}`);
     }
     toString() { return this.id; }
