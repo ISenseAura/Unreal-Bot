@@ -2,7 +2,7 @@ import type { Command, CommandModule } from "../commands";
 import type { PSMessage } from "../message";
 
 export const info: CommandModule = {
-  name: "Developer Commands",
+  name: "Developer",
   description: "Developer commands which are useful during bot development.",
   perms: "dev",
 };
@@ -95,6 +95,43 @@ export const commands: Record<string, Command> = {
       } catch {
         message.respond(`DNS lookup failed for ${args[0]}`);
       }
+    },
+  },
+
+  reload: {
+    name: "reload",
+    help: "Reloads a command module",
+    syntax: "!reload [command name or module name]",
+    async execute(args, message) {
+      if (!args[0]) return message.respond(`Usage: \`\`${this.syntax}\`\``);
+      let success = [] as string[];
+      let failed = [] as string[];
+      const modules = Commands.getCommands() as Record<string, CommandModule>;
+      for (const name of args) {
+        const id = toId(name);
+        const cmd = Commands.get(toId(name)) as Command;
+        const filePath = modules[id]?.sourcePath || cmd?.sourcePath;
+        if (!filePath) {
+          failed.push(name);
+          continue;
+        }
+        const reloaded = await Commands.reload(filePath);
+        if (!reloaded) {
+          failed.push(name);
+        } else {
+          success.push(modules[id] ? modules[id].name : cmd.module || '');
+        }
+      }
+      let output = [];
+
+      if (success.length) {
+        output.push(`Successfully reloaded: ${success.join(", ")}`);
+      }
+      if (failed.length) {
+        output.push(`Failed to reload: ${failed.join(", ")}`);
+      }
+
+      message.respond(output.join(" | "));
     },
   },
 };
