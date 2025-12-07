@@ -5,6 +5,7 @@ import type { Room } from "./room";
 import type { User } from ".";
 import type { PSMessage } from "./message";
 import type { Perms } from "./permissions";
+import { compileSingleTS } from "./utils/esbuild";
 
 export interface CommandContext {
   room: Room | null;
@@ -16,6 +17,7 @@ export interface CommandModule {
   name: string;
   description: string;
   commands?: Record<string, Partial<Command>>;
+  sourcePath?: string;
   perms?: Perms;
 }
 
@@ -39,6 +41,8 @@ export interface Command {
   cooldownMs?: number;
 
   history?: CommandHistoryEntry[];
+  sourcePath?: string;
+  module?: string;
 
   execute: (
     args: string[],
@@ -79,6 +83,7 @@ export class CommandsList {
         if (!mod.commands) continue;
         if (moduleName) {
           this.sortedCommands[moduleName] = mod.info;
+          this.sortedCommands[moduleName].sourcePath = full;
         }
         for (const key of Object.keys(mod.commands)) {
           const command = mod.commands[key] as Command;
@@ -89,6 +94,8 @@ export class CommandsList {
           command.prefix = global.Config.prefixes[0];
           if (mod?.info?.perms && !command.overridePerms)
             command.perms = mod.info.perms;
+          if (moduleName) command.module = moduleName;
+          command.sourcePath = full;
           this.commands.set(toID(command.name), command);
           if (moduleName) {
             if (this.sortedCommands[moduleName].commands === undefined) {
@@ -108,6 +115,66 @@ export class CommandsList {
           }
         }
       }
+    }
+  }
+
+  async reload(filePath: string) {
+    try {
+      let jsPath = filePath;
+      const tsEquivalent = filePath
+        .replace("dist", "src")
+        .replace(/\.js$/, ".ts");
+      try {
+        await fs.access(tsEquivalent);
+        console.log(`Compiling TS before reload: ${tsEquivalent}`);
+        const updatedJS = await compileSingleTS(tsEquivalent);
+        if (!updatedJS) {
+          console.log("Compilation failed. Aborting hotpatch.");
+          return false;
+        }
+        jsPath = updatedJS;
+      } catch {}
+
+      const resolved = require.resolve(jsPath);
+      delete require.cache[resolved];
+
+      const mod = require(resolved);
+      for (const [key, cmd] of this.commands.entries()) {
+        if (cmd.sourcePath === resolved) {
+          this.commands.delete(key);
+        }
+      }
+
+      if (mod.commands) {
+        for (const cmdName of Object.keys(mod.commands)) {
+          const cmd = mod.commands[cmdName] as Command;
+
+          cmd.syntax = `\`\`${cmd.syntax.replace(
+            "!",
+            global.Config.prefixes[0]
+          )}\`\``;
+
+          cmd.prefix = global.Config.prefixes[0];
+          cmd.sourcePath = resolved;
+
+          if (mod?.info?.perms && !cmd.overridePerms) {
+            cmd.perms = mod.info.perms;
+          }
+          if (mod?.info?.name) cmd.module = mod.info.name;
+          this.commands.set(toID(cmd.name), cmd);
+
+          if (cmd.aliases) {
+            for (const alias of cmd.aliases) {
+              this.commands.set(toID(alias), cmd);
+            }
+          }
+        }
+      }
+      console.log(`Hotpatched: ${jsPath}`);
+      return true;
+    } catch (err) {
+      console.error(`Hotpatch failed for ${filePath}:`, err);
+      return false;
     }
   }
 
@@ -142,5 +209,8 @@ export class CommandsList {
   }
   getCommands() {
     return this.sortedCommands;
+  }
+  getModuleIds() {
+    return Object.keys(this.sortedCommands);
   }
 }
