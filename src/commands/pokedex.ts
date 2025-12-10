@@ -5,7 +5,7 @@ import axios from "axios";
 export const info: CommandModule = {
   name: "Pokedex",
   description: "Commands to fetch information about a pokemon",
-  perms: "dev",
+  perms: "+",
 };
 
 export const commands: Record<string, Command | string> = {
