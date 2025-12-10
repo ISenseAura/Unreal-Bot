@@ -7,15 +7,25 @@ abstract class BotConfig {
 }
 
 class Config extends BotConfig {
-  username = "my3amthoughts";
+  username = "Unreal Bot";
   password = "SIX_SEVEN";
   prefixes = ["."];
   developers = ["p9"];
   rooms = ["botdevelopment"];
   lockedRooms = [""];
 
-  status = "I'm as real as you are"
+  status = "I'm as real as you are";
   commandsDir = "src/commands";
+
+  discordToken = "";
+  discordAppId = "";
+  discordPublicKey = "";
+  discordOwnerId = "";
+
+  // gemini chat AI
+  geminiAPIKey = "";
+  geminiMaxContext = 20;
+  geminiEnabledRooms = ["botdevelopment"];
 }
 
 export default new Config();

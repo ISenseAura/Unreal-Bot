@@ -3,6 +3,8 @@
  */
 
 import {PSSendable, PSList} from './bases';
+import { PSGeminiChat, PSGeminiOptions } from './lib/gemini-chat';
+import { PSMessage } from './message';
 import {Client} from './ps';
 import {User} from './user';
 
@@ -12,11 +14,15 @@ export class Room extends PSSendable {
     title = '';
     users: Record<string, User> = {};
     auth: Record<string, string[]> = {};
+    chatAI: PSGeminiChat | null = null;
     setData(data: any) {
         Object.assign(this.data, data);
         if (data.roomid) this.id = data.roomid;
         if (data.title) this.title = data.title;
         if (data.auth) this.auth = data.auth;
+        if (Config.geminiEnabledRooms.includes(data.roomid)) {
+            this.chatAI = new PSGeminiChat({ apiKey: Config.geminiAPIKey, maxContext: Config.geminiMaxContext} as PSGeminiOptions);
+        }
     }
     async update() {
         try {
@@ -27,6 +33,10 @@ export class Room extends PSSendable {
             return false;
         }
         return true;
+    }
+    logChat(message: PSMessage) {
+        const name = message.from?.name || '';
+        this.chatAI?.addUserMessage(`${name} says ${message.text}`);
     }
     send(message: string) {
         if (Config.lockedRooms.includes(this.id)) return console.log(`Cannot send message to a locked room: ${this.id}`);

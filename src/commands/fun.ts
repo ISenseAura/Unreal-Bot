@@ -1,16 +1,18 @@
 import type { Command, CommandModule } from "../commands";
 import { PSMessage } from "../message";
+import { Room } from "../room";
 
 export const info: CommandModule = {
   name: "Fun",
-  description: "Fun commands which can be used to bully people, the bot or yourself.",
+  description:
+    "Fun commands which can be used to bully people, the bot or yourself.",
 };
 export const commands: Record<string, Command> = {
   reverse: {
     name: "reverse",
     help: "Reverses the text.",
     syntax: "!reverse text",
-    
+
     async execute(args, message) {
       if (!args.length) return message.respond("Usage: " + this.syntax);
       const text = args.join(" ");
@@ -22,7 +24,7 @@ export const commands: Record<string, Command> = {
     name: "owotext",
     help: "Turns text into OwO style.",
     syntax: "!owotext text",
-    
+
     async execute(args, message) {
       if (!args.length) return message.respond("Usage: " + this.syntax);
 
@@ -41,7 +43,7 @@ export const commands: Record<string, Command> = {
     name: "mock",
     help: "mOcK tExT lIkE sPoNgEbOb",
     syntax: "!mock text",
-    
+
     async execute(args, message) {
       if (!args.length) return message.respond("Usage: " + this.syntax);
 
@@ -60,7 +62,7 @@ export const commands: Record<string, Command> = {
     name: "morse",
     help: "Encodes text into Morse code.",
     syntax: "!morse text",
-    
+
     async execute(args, message) {
       if (!args.length) return message.respond("Usage: " + this.syntax);
 
@@ -118,7 +120,7 @@ export const commands: Record<string, Command> = {
     name: "unmorse",
     help: "Decodes Morse code to text.",
     syntax: "!unmorse morse",
-    
+
     async execute(args, message) {
       if (!args.length) return message.respond("Usage: " + this.syntax);
 
@@ -176,7 +178,7 @@ export const commands: Record<string, Command> = {
     name: "ub64",
     help: "Decodes Base64 to text.",
     syntax: "!ub64 base64",
-    
+
     async execute(args, message) {
       if (!args.length) return message.respond("Usage: " + this.syntax);
 
@@ -193,7 +195,7 @@ export const commands: Record<string, Command> = {
     name: "binary",
     help: "Converts text to binary.",
     syntax: "!binary text",
-    
+
     async execute(args, message) {
       if (!args.length) return message.respond("Usage: " + this.syntax);
 
@@ -211,7 +213,7 @@ export const commands: Record<string, Command> = {
     name: "unbinary",
     help: "Converts binary to text.",
     syntax: "!unbinary binary",
-    
+
     async execute(args, message) {
       if (!args.length) return message.respond("Usage: " + this.syntax);
 
@@ -233,7 +235,7 @@ export const commands: Record<string, Command> = {
     name: "hex",
     help: "Converts text to hex.",
     syntax: "!hex text",
-    
+
     async execute(args, message) {
       if (!args.length) return message.respond("Usage: " + this.syntax);
 
@@ -246,7 +248,7 @@ export const commands: Record<string, Command> = {
     name: "unhex",
     help: "Converts hex to text.",
     syntax: "!unhex hexdata",
-    
+
     async execute(args, message) {
       if (!args.length) return message.respond("Usage: " + this.syntax);
 
@@ -263,7 +265,7 @@ export const commands: Record<string, Command> = {
     name: "choice",
     help: "Randomly picks one option.",
     syntax: "!choice a,b,c",
-    
+
     async execute(args, message) {
       if (!args.length) return message.respond("Usage: " + this.syntax);
 
@@ -278,7 +280,6 @@ export const commands: Record<string, Command> = {
     name: "shuffle",
     help: "Shuffles all letters randomly.",
     syntax: "!shuffle text",
-    
     async execute(args, message) {
       if (!args.length) return message.respond("Usage: " + this.syntax);
 
@@ -292,68 +293,85 @@ export const commands: Record<string, Command> = {
       message.respond(arr.join(","));
     },
   },
+  superpower: {
+    name: "superpower",
+    help: "Gives you a random superhero ability.",
+    syntax: "!superpower",
 
-  ask: {
-  name: "ask",
-  help: "Returns YES or NO like a magic 8-ball.",
-  syntax: "!ask question",
-  
-  async execute(args, message) {
-    const responses = ["Yes!", "No!", "Maybe...", "Definitely!", "Absolutely not!", "Ask again!", "Probably!", "Probably not!"];
-    message.respond(responses[Math.floor(Math.random() * responses.length)]);
-  },
-},
-
-superpower: {
-  name: "superpower",
-  help: "Gives you a random superhero ability.",
-  syntax: "!superpower",
-  
-  async execute(args, message) {
-    const powers = [
-      "Invisibility for 10 seconds",
-      "Super speed (but only when excited)",
-      "Teleport 1 meter at a time",
-      "Talk to animals",
-      "Summon tiny sparkles",
-      "Glow in the dark",
-      "Jump super high",
-      "Create small forcefields",
-      "Instantly learn any hobby",
-      "Control small breezes of wind",
-      "See in the dark like a cat",
-    ];
-
-    message.respond("**Your Superpower:** " + powers[Math.floor(Math.random() * powers.length)]);
-  },
-},
-
-regex: {
-  name: "regex",
-  help: "Tests regex patterns on text.",
-  syntax: "!regex text pattern",
-  
-  async execute(args, message) {
-    if (args.length < 2) return message.respond("Usage: " + this.syntax);
-
-    const text = args.slice(0, -1).join(" ");
-    const pattern = args[args.length - 1];
-
-    try {
-      const re = new RegExp(pattern, "g");
-      const matches = text.match(re);
+    async execute(args, message) {
+      const powers = [
+        "Invisibility for 10 seconds",
+        "Super speed (but only when excited)",
+        "Teleport 1 meter at a time",
+        "Talk to animals",
+        "Summon tiny sparkles",
+        "Glow in the dark",
+        "Jump super high",
+        "Create small forcefields",
+        "Instantly learn any hobby",
+        "Control small breezes of wind",
+        "See in the dark like a cat",
+      ];
 
       message.respond(
-        matches
-          ? `**Matches:** ${matches.join(", ")}`
-          : "No matches found."
+        "**Your Superpower:** " +
+          powers[Math.floor(Math.random() * powers.length)]
       );
-    } catch (e) {
-      message.respond("Invalid regex pattern.");
-    }
+    },
   },
-},
 
+  regex: {
+    name: "regex",
+    help: "Tests regex patterns on text.",
+    syntax: "!regex text pattern",
 
+    async execute(args, message) {
+      if (args.length < 2) return message.respond("Usage: " + this.syntax);
 
+      const text = args.slice(0, -1).join(" ");
+      const pattern = args[args.length - 1];
+
+      try {
+        const re = new RegExp(pattern, "g");
+        const matches = text.match(re);
+
+        message.respond(
+          matches ? `**Matches:** ${matches.join(", ")}` : "No matches found."
+        );
+      } catch (e) {
+        message.respond("Invalid regex pattern.");
+      }
+    },
+  },
+
+  randcat: {
+    name: "randcat",
+    help: "RANDCATT",
+    syntax: "!randcat",
+    async execute(args, message) {
+      message.respond("_randcat");
+    },
+  },
+  askgemini: {
+    name: "askgemini",
+    help: "Its simple, isn't it? you ask AI and it says either something wise or stupid.",
+    syntax: "!ask text",
+    perms: "dev",
+    aliases: ["ask"],
+    async execute(args: string[], message: PSMessage) {
+      const room = message.to as Room;
+      if (!room || !room.chatAI)
+        return message.respond("This feature isnt enabled in this room");
+      const que = `${message.from ? message.from.id + " says" : ""} ${args.join(
+        " "
+      )}`;
+      try {
+        const ans = await room.chatAI.getBotReply(que);
+        message.respond(ans);
+      } catch (e) {
+        message.respond("i am busy, do not disturb");
+      }
+      return;
+    },
+  },
 };
