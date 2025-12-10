@@ -119,13 +119,13 @@ export const commands: Record<string, Command> = {
         if (!reloaded) {
           failed.push(name);
         } else {
-          success.push(modules[id] ? modules[id].name : cmd.module || '');
+          success.push(modules[id] ? modules[id].name : cmd.module || name);
         }
       }
       let output = [];
 
       if (success.length) {
-        output.push(`Successfully reloaded: ${success.join(", ")}`);
+        output.push(`Successfully reloaded module: ${success.join(", ")}`);
       }
       if (failed.length) {
         output.push(`Failed to reload: ${failed.join(", ")}`);
@@ -134,4 +134,13 @@ export const commands: Record<string, Command> = {
       message.respond(output.join(" | "));
     },
   },
+
+  say: {
+    name: 'say',
+    help: 'Says',
+    syntax: '!say text',
+    async execute(args, message) {
+      message.respond(args.join(' '));
+    },
+  }
 };

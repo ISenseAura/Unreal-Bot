@@ -10,7 +10,7 @@ export const commands: Record<string, Command> = {
   commands: {
     name: "commands",
     help: "Provides information about all bot commands.",
-    syntax: "!commands",
+    syntax: "!commands show(optional)",
     execute: async (args: string[], message: PSMessage) => {
       const sortedCommands = Commands.getCommands() as Record<
         string,
@@ -48,7 +48,8 @@ export const commands: Record<string, Command> = {
 `;
       }
       html += `</div>`;
-      message.respond("/adduhtml mycommands, " + html);
+      if (toId(args[0] || '') === 'show' && message.isRank('+')) return message.respond("/adduhtml mycommands, " + html);
+      message.respond(`/sendprivateuhtml ${message.from?.id}, commandshelp,` + html.replace(/\n/g, ""));
       return;
     },
   },

@@ -12,7 +12,7 @@ export const commands: Record<string, Command | string> = {
   dexentry: {
     name: "dexentry",
     help: "Provides PokeDex entry of given pokemon.",
-    syntax: "!dexentry <pokemon>",
+    syntax: "!dexentry pokemon",
     aliases: ["pokedexentry", "entry"],
     async execute(args: string[], message: PSMessage) {
       if (!args[0]) return message.respond("Please provide a pokemon name.");
