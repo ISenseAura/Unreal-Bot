@@ -36,9 +36,11 @@ PS.on("raw", (msg) => {
   console.log(msg.slice(0, 100));
 });
 PS.on("message", (msg) => {
+    const room = msg.to;
+  if (room && room?.chatAI) room.logChat(msg);
   if (msg.noReply)
     return console.log("Attempted to reply to a room init message");
-  if (/\bp9\b[.,!?]?/i.test(msg.text)) {
+  if (/\bp9\b[.,!?]?/i.test(msg.text) && msg.from?.id !== 'p9') {
     Discord.sendDM(
       Config.discordOwnerId,
       `<${msg.to.id}>${msg.from.name}: ${msg.text}`
