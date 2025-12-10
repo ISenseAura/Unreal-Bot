@@ -182,6 +182,10 @@ export class CommandsList {
     const text = message.text;
     const cmd = text.split(" ")[0].replace(message.prefix!, "");
     const command = this.commands.get(toID(cmd));
+    if (Config.lockedRooms.includes(message.to?.id)) {
+      console.log(`[Ignored] <${message.to?.id}> ${message.text}`);
+      return null;
+    }
     if (command?.perms) {
       if (command.perms === "dev" && !(message.from && message.from.isDev())) {
         message.respond("You do not have permission to use this command.");
