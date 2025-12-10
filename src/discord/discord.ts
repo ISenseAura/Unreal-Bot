@@ -91,7 +91,7 @@ async sendMessage(channelId: string, text: string) {
 
   async sendDM(userId: string, text: string) {
     const user = await this.getUser(userId);
-    if (!user) throw new Error("User not found.");
+    if (!user) return false;
     return user.send(text);
   }
 

@@ -13,6 +13,7 @@ export class User extends PSSendable {
     rooms: Record<string, {group: string, isPrivate?: boolean}> = {};
     name = '';
     avatar = '';
+    discordId: string | null = null;
     setData(data: any) {
         Object.assign(this.data, data);
         if (data.group) this.group = data.group;
@@ -35,10 +36,19 @@ export class User extends PSSendable {
                 }
             }
         }
+        const dcid = Db.file('discord/users.json').data;
+        if (dcid?.[this.id]?.id) this.setDiscordId(dcid[this.id].id);
+    }
+    setDiscordId(id: string) {
+        this.discordId = id;
     }
     send(message: string) {
         if (Config.lockedRooms.includes(this.id)) return console.log(`Cannot send message to a locked room: ${this.id}`);
         return this.client.send(`|/pm ${this.id},${message}`);
+    }
+    sendDm(message: string) {
+        if (!this.discordId) return false;
+        return Discord.sendDM(this.discordId, message);
     }
     async update() {
         try {
