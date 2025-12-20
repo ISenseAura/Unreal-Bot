@@ -357,6 +357,7 @@ export const commands: Record<string, Command> = {
     aliases: ["ask"],
     help: "Ask the magic 8-ball a question.",
     syntax: "!8ball question",
+    perms: "+",
 
     async execute(args: string[], message: PSMessage) {
       if (!args.length) {
