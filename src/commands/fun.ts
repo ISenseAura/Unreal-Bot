@@ -352,12 +352,72 @@ export const commands: Record<string, Command> = {
       message.respond("_randcat");
     },
   },
+  "8ball": {
+    name: "8ball",
+    aliases: ["ask"],
+    help: "Ask the magic 8-ball a question.",
+    syntax: "!8ball question",
+
+    async execute(args: string[], message: PSMessage) {
+      if (!args.length) {
+        return message.respond("You must ask a question, mortal.");
+      }
+
+      const responses: readonly string[] = [
+        "Absolutely yes.",
+        "Without a doubt.",
+        "The stars say yes.",
+        "Arceus himself nodded.",
+        "Certified W.",
+        "Yes. Screenshot this.",
+
+        "Probably yes.",
+        "Looks good to me.",
+        "Signs point to yes.",
+        "I’d bet my Rare Candy on it.",
+        "Momentum is on your side.",
+
+        "Ask again later.",
+        "Hard to say… vibes are mixed.",
+        "The universe is buffering.",
+        "Too early to tell.",
+        "My sources went quiet.",
+        "Focus… and ask again.",
+
+        "Probably not.",
+        "Doesn’t look great.",
+        "I wouldn’t count on it.",
+        "Chances are slim.",
+        "The odds are not in your favor.",
+
+        "No.",
+        "Absolutely not.",
+        "Yeah… that’s a no.",
+        "Not happening.",
+        "Even RNG said no.",
+        "Pack it up, chief.",
+
+        "Ask your mom.",
+        "Try again after touching grass.",
+        "Only if you believe hard enough.",
+        "The answer is classified.",
+        "Skill issue.",
+        "Yes, but only in another timeline.",
+        "No, but it’d be funny if it worked.",
+        "The 8-ball refuses to elaborate.",
+      ];
+
+      const choice = responses[Math.floor(Math.random() * responses.length)];
+
+      message.respond(`${choice}`);
+    },
+  },
   askgemini: {
     name: "askgemini",
     help: "Its simple, isn't it? you ask AI and it says either something wise or stupid.",
     syntax: "!ask text",
     perms: "dev",
-    aliases: ["ask"],
+    aliases: ["askai"],
     async execute(args: string[], message: PSMessage) {
       const room = message.to as Room;
       if (!room || !room.chatAI)
