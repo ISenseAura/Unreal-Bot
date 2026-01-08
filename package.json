@@ -12,7 +12,7 @@
   "main": "./dist/index.js",
 "scripts": {
   "clean": "rimraf dist",
-  "build": "npm run clean && npx tsc -p ./",
+  "build": "npm run clean && npx tsc -p ./ && node build",
   "start": "npm run build && node dist/run.js"
 },
   "repository": {

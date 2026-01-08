@@ -21,6 +21,7 @@
       "skipLibCheck": true, 
       "forceConsistentCasingInFileNames": true
     },
+          "exclude": ["pokemon-showdown"],
     "types": ["node"],
 }
   
