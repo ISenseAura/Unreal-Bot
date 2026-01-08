@@ -9,7 +9,7 @@ import path from "path";
 global.Commands = new CommandsList();
 global.Config = Config;
 global.toId = toId;
-
+global.psdir = path.resolve(__dirname, "../pokemon-showdown");
 const storage = new StorageManager(path.resolve(__dirname, "../database"));
 global.Db = storage;
 

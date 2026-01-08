@@ -10,6 +10,8 @@ declare global {
 
     var Users: import("./user").Users;
     var Rooms: import("./room").Rooms;
+
+    var psdir: string;
 }
 
 export {};
