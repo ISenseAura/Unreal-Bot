@@ -61,7 +61,7 @@ export const commands: Record<string, Command> = {
       if (!user.discordId)
         return message.respond("User does not have a discord id set.");
       try {
-      const result = user.sendDm(rest);
+      const result = await user.sendDm(rest);
       if (!result)
         return message.respond(
           "Failed to send message due to unknown reasons."
