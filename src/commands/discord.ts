@@ -5,7 +5,6 @@ import { PSMessage } from "../message";
 export const info: CommandModule = {
   name: "Discord",
   description: "bunch of discord related commands",
-  perms: "dev",
 };
 
 export const commands: Record<string, Command> = {
@@ -13,7 +12,6 @@ export const commands: Record<string, Command> = {
     name: "dcid",
     help: "Use it to update your discord information on bot's storage",
     syntax: "!dcid [set | remove | get] id",
-    perms: 'dev',
     async execute(args: string[], message: PSMessage) {
       if (!args[1] && args[0] === "set")
         return message.respond(`Usage: ${this.syntax}`);
@@ -52,7 +50,7 @@ export const commands: Record<string, Command> = {
     name: "senddm",
     help: "Send discord DM to an user",
     syntax: "!senddm userid, message",
-    perms: 'dev',
+    perms: "dev",
     async execute(args, message) {
       args = args.join(" ").split(",");
       if (!args[1]) return message.respond(`Usage: \`\`${this.syntax}\`\``);
@@ -62,12 +60,14 @@ export const commands: Record<string, Command> = {
       if (!user) return message.respond("User not found");
       if (!user.discordId)
         return message.respond("User does not have a discord id set.");
+      try {
       const result = user.sendDm(rest);
       if (!result)
         return message.respond(
           "Failed to send message due to unknown reasons."
         );
       message.respond("Sent.");
+      } catch (e) { message.respond("Failed to send message."); }
     },
   },
 };
